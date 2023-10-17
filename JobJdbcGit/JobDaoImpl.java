@@ -33,6 +33,31 @@ public class JobDaoImpl implements JobDaoInterface {
 		return false;
 		}
 	}
+	public void addJobSeeker(JobSeeker jsk) throws SQLException
+	{
+		PreparedStatement pst=con.prepareStatement("insert into jobseekertable values(?,?,?,?,?,?,?)");
+		pst.setString(1, jsk.getJsname());
+		pst.setString(2, jsk.getMail_ID());
+		pst.setLong(3, jsk.getMobile_number());
+		pst.setString(4, jsk.getKey_skills());
+		pst.setInt(5,jsk.getAge());
+		pst.setString(6,jsk.getEducation());
+		pst.setString(7, jsk.getAddress());
+	
+		int i=pst.executeUpdate();
+		if(i>0)
+		{
+			System.out.println(i+" jobseeker added successfully");
+		}
+		else
+		{
+			System.out.println("  failed");
+		}
+		//statement.executeUpdate("insert into jobseeker values(?,?,?,?,?,?,?)");
+		
+	}
+	
+	
 	public void postJob(JobClass jc) throws SQLException
 	{
 		PreparedStatement pst=con.prepareStatement("insert into jobtable values(?,?,?,?,?,?,?,?,?,?,?)");
@@ -184,12 +209,34 @@ public class JobDaoImpl implements JobDaoInterface {
 		else
 			System.out.println("update failed");
 	}
-	public void updateAllDetails(int postid,JobClass jc)throws SQLException
+	public void updateAllDetails(int postid,JobClass jc,int rid)throws SQLException
 	{
-		//String companyname, String jobrole,String job_description, String qualification, String keyskill, String location,float experience, String postdate, String type_of_job, String domain
-		String updateQuery = "UPDATE jobclass SET companyname=?, jobrole=?, job_description=?, qualification=?, keyskill=?, location=?, experience=?, postdate=?, type_of_job=?, domain=? WHERE jobid=?";
 		
-		//PreparedStatement pst=con.prepareStatement("update jobclass set companyname=?  where jobid=?");
+		String updateQuery = "UPDATE jobclass SET companyname=?, jobrole=?, job_description=?, qualification=?, keyskill=?, location=?, experience=?, postdate=?, type_of_job=?, domain=? WHERE jobid=? and rid=?";
+		PreparedStatement pst=con.prepareStatement(updateQuery);
+		pst.setString(1,jc.getCompanyname());
+		pst.setString(2,jc.getJobrole());
+		pst.setString(3,jc.getJob_description());
+		pst.setString(4,jc.getQualification());
+		pst.setString(5,jc.getKeyskill());
+		pst.setString(6, jc.getLocation());
+		pst.setFloat(7,jc.getExperience());
+		pst.setString(8, jc.getPostdate());
+		pst.setString(9, jc.getType_of_job());
+		pst.setString(10, jc.getDomain());
+		pst.setInt(11,jc.getJobid());
+		pst.setInt(12, rid);
+		int i=pst.executeUpdate();
+		if(i>0)
+		{
+			System.out.println(i+" job posted successfully");
+		}
+		else
+		{
+			System.out.println(" job posting failed");
+		}
+		
+		
 	}
 	
 	

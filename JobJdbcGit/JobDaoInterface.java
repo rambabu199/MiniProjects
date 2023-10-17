@@ -3,6 +3,7 @@ package com.bitlabs.jobportaljdbc;
 import java.sql.SQLException;
 
 public interface JobDaoInterface {
+	void addJobSeeker(JobSeeker jsk) throws SQLException;
 
 	void postJob(JobClass jc) throws SQLException;
 
@@ -68,7 +69,7 @@ public interface JobDaoInterface {
 
 	void updateDomain(int postid, String udomain)throws SQLException;
 
-	void updateAllDetails(int postid,JobClass jc)throws SQLException;
+	void updateAllDetails(int postid,JobClass jc,int rid)throws SQLException;
 
 	//boolean recruterLogin(String username, String password) throws SQLException;
 	//boolean recruterLogin(String username, String password);

@@ -10,6 +10,7 @@ import java.util.*;
 public class App 
 {
 	JobDaoInterface jdi=new JobDaoImpl();
+	JobSeeker jsk=new JobSeeker();
 	/*public void loginModule()
 	{
 		
@@ -93,6 +94,33 @@ public class App
 				String email=sc.next();
 				System.out.println("enter mobile number");
 				long mobile=sc.nextLong();
+			case 2:
+			//public JobSeeker(int jsid, String jsname, String mail_ID, 
+			 * Long mobile_number, String key_skills, int age,
+		String education, String address) {
+				System.out.println("enter your name");
+				String jsname=sc.nextLine();
+				jsk.setJsname(jsname);
+				System.out.println("enter your mailId");
+				String email=sc.next();
+				jsk.setMail_ID(email);
+				System.out.println("enter mobile number");
+				long mobile=sc.nextLong();
+				jsk.setMobile_number(mobile);
+				System.out.println("enter your key skills");
+				String jskeyskills=sc.nextLine();
+				jsk.setKey_skills(jskeyskills);
+				System.out.println("enter your age");
+				int jsage=sc.nextInt();
+				jsk.setAge(jsage);
+				System.out.println("enter your education qualification");
+				String jsqua=sc.nextLine();
+				jsk.setEducation(jsqua);
+				System.out.println("enter your address");
+				String jsaddress=sc.nextLine();
+				jsk.setAddress(jsaddress);
+				jdi.addJobSeeker(jsk);
+				
 				
 			}
 			
@@ -176,6 +204,7 @@ public class App
 	public void recruterMenu() throws SQLException {
 		Scanner sc=new Scanner(System.in);
 		JobClass jc=new JobClass();
+		
 		
 		System.out.println("elcome to recruter Menu \n 1.post a job 2.update  job details \n 3.delete post \n 4.view post \n please enter your choice");
 		int ch=sc.nextInt();

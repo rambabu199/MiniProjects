@@ -21,6 +21,9 @@ public class JobSeeker {
 		this.education = education;
 		this.address = address;
 	}
+	public JobSeeker() {
+		// TODO Auto-generated constructor stub
+	}
 	public int getJsid() {
 		return jsid;
 	}
