@@ -1,11 +1,11 @@
-package com.bitlabs.jobportaljdbc;
+package bitlabs123.jobportal_JDBC;
 
 import java.sql.SQLException;
 
 public interface JobDaoInterface {
 	void addJobSeeker(JobSeeker jsk) throws SQLException;
 
-	void postJob(JobClass jc) throws SQLException;
+	void postJob(int rid, JobClass jc) throws SQLException;
 
 	void deletePost(int pid) throws SQLException;
 
@@ -15,7 +15,7 @@ public interface JobDaoInterface {
 
 	void deletePostdate(String date)throws SQLException;
 
-	void updateRole(int postid, String urole)throws SQLException;
+	void updateRole(int rid,int postid, String urole)throws SQLException;
 
 	void displayByJobRole(String drole)throws SQLException;
 
@@ -59,24 +59,24 @@ public interface JobDaoInterface {
 
 	void searchByDate(String jsdate)throws SQLException;
 
-	void updateLocation(int postid, String ulocation)throws SQLException;
+	void updateLocation(int rid,int postid, String ulocation)throws SQLException;
 
-	void updateExperience(int postid, float uexp)throws SQLException;
+	void updateExperience(int rid,int postid, float uexp)throws SQLException;
 
-	void updatePostdate(int postid, String udate)throws SQLException;
+	void updatePostdate(int rid,int postid, String udate)throws SQLException;
 
-	void updateType_of_job(int postid, String utype)throws SQLException;
+	void updateType_of_job(int rid,int postid, String utype)throws SQLException;
 
-	void updateDomain(int postid, String udomain)throws SQLException;
+	void updateDomain(int rid,int postid, String udomain)throws SQLException;
 
-	void updateAllDetails(int postid,JobClass jc,int rid)throws SQLException;
+	void updateAllDetails(int rid,int postid,JobClass jc)throws SQLException;
 
-	//boolean recruterLogin(String username, String password) throws SQLException;
+	int recruterLogin(String username, String password) throws SQLException;
 	//boolean recruterLogin(String username, String password);
 
-	//boolean AdminLogin(String jusername, String jpassword);
+	boolean AdminLogin(String jusername, String jpassword)throws SQLException;
 
-	//boolean jobseekerLogin(String jusername, String jpassword);
+	int jobseekerLogin(String jusername, String jpassword);
 
 
 }

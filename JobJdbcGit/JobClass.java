@@ -1,4 +1,5 @@
-package com.bitlabs.jobportaljdbc;
+package bitlabs123.jobportal_JDBC;
+
 
 public class JobClass {
 	private String companyname;

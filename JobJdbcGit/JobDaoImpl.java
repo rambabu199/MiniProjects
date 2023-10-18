@@ -1,9 +1,11 @@
-package com.bitlabs.jobportaljdbc;
+package bitlabs123.jobportal_JDBC;
 
+import java.sql.Connection;
 import java.sql.*;
-
-
-
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 public class JobDaoImpl implements JobDaoInterface {
 	Connection con;
 	Statement statement;
@@ -21,16 +23,16 @@ public class JobDaoImpl implements JobDaoInterface {
 		}
 	}
 	
-	public boolean recruterLogin(String username, String password) throws SQLException
+	public int recruterLogin(String username, String password) throws SQLException
 	{
 		ResultSet rs=statement.executeQuery("select * from reg_table where username='"+username+"' and password='"+password+"'");
 		if(rs.next())
 		{
-			System.out.println("logined successfully");
-			return true;
+			
+			return rs.getInt(1);
 		}
 		else {
-		return false;
+		return 0;
 		}
 	}
 	public void addJobSeeker(JobSeeker jsk) throws SQLException
@@ -58,7 +60,8 @@ public class JobDaoImpl implements JobDaoInterface {
 	}
 	
 	
-	public void postJob(JobClass jc) throws SQLException
+	public void postJob(int rid,JobClass jc) throws SQLException
+
 	{
 		PreparedStatement pst=con.prepareStatement("insert into jobtable values(?,?,?,?,?,?,?,?,?,?,?)");
 		pst.setInt(1, jc.getJobid());
@@ -83,6 +86,9 @@ public class JobDaoImpl implements JobDaoInterface {
 		}
 		
 	}
+	
+	
+	//delete post usecases
 	public void deletePost(int pid) throws SQLException
 	{
 		int i=statement.executeUpdate("delete * from jobtable where jobid='"+pid+"'");
@@ -131,63 +137,72 @@ public class JobDaoImpl implements JobDaoInterface {
 			System.out.println("there is no such posts");
 		}
 	}
-	public void updateRole(int postid, String urole)throws SQLException
+	
+	
+	
+	//update post details usecases
+	public void updateRole(int rid,int postid, String urole)throws SQLException
 	{
-		PreparedStatement pst=con.prepareStatement("update jobclass set jobrole=? where jobid=?");
+		PreparedStatement pst=con.prepareStatement("update jobclass set jobrole=? where jobid=? and rid=?");
 		pst.setInt(1, postid);
 		pst.setString(2, urole);
+		pst.setInt(3,rid);
 		int i=pst.executeUpdate();
 		if(i>0)
 		{
-			System.out.println(i+" post updated succesfully");
+			System.out.println(i+" post_role updated succesfully");
 		}
 		else
 			System.out.println("update failed");
 	}
-	public void updateLocation(int postid, String ulocation)throws SQLException
+	public void updateLocation(int rid,int postid, String ulocation)throws SQLException
 	{
-		PreparedStatement pst=con.prepareStatement("update jobclass set location=? where jobid=?");
+		PreparedStatement pst=con.prepareStatement("update jobclass set location=? where jobid=? and rid=?");
 		pst.setInt(1, postid);
 		pst.setString(2, ulocation);
+		pst.setInt(3, rid);
 		int f=pst.executeUpdate();
 		if(f>0)
 		{
-			System.out.println(f+" post updated succesfully");
+			System.out.println(f+" post location updated succesfully");
 		}
 		else
 			System.out.println("update failed");
 	}
-	public void updateExperience(int postid, String uexperience)throws SQLException
+	public void updateExperience(int rid,int postid, String uexperience)throws SQLException
 	{
-		PreparedStatement pst=con.prepareStatement("update jobclass set experience=? where jobid=?");
+		PreparedStatement pst=con.prepareStatement("update jobclass set experience=? where jobid=? and rid=?");
 		pst.setInt(1, postid);
 		pst.setString(2, uexperience);
+		pst.setInt(3, rid);
 		int g=pst.executeUpdate();
 		if(g>0)
 		{
-			System.out.println(g+" post updated succesfully");
+			System.out.println(g+" post experience updated succesfully");
 		}
 		else
 			System.out.println("update failed");
 	}
-	public void updatePostdate(int postid, String upostdate)throws SQLException
+	public void updatePostdate(int rid,int postid, String upostdate)throws SQLException
 	{
-		PreparedStatement pst=con.prepareStatement("update jobclass set postdate=? where jobid=?");
+		PreparedStatement pst=con.prepareStatement("update jobclass set postdate=? where jobid=? and rid=?");
 		pst.setInt(1, postid);
 		pst.setString(2, upostdate);
+		pst.setInt(3, rid);
 		int h=pst.executeUpdate();
 		if(h>0)
 		{
-			System.out.println(h+" post updated succesfully");
+			System.out.println(h+" postdate updated succesfully");
 		}
 		else
 			System.out.println("update failed");
 	}
-	public void updateType_of_job(int postid, String utype_of_job)throws SQLException
+	public void updateType_of_job(int rid,int postid, String utype_of_job)throws SQLException
 	{
-		PreparedStatement pst=con.prepareStatement("update jobclass set type_of_job=? where jobid=?");
+		PreparedStatement pst=con.prepareStatement("update jobclass set type_of_job=? where jobid=? and rid=?");
 		pst.setInt(1, postid);
 		pst.setString(2, utype_of_job);
+		pst.setInt(3, rid);
 		int j=pst.executeUpdate();
 		if(j>0)
 		{
@@ -196,11 +211,12 @@ public class JobDaoImpl implements JobDaoInterface {
 		else
 			System.out.println("update failed");
 	}
-	public void updateDomain(int postid, String udomain)throws SQLException
+	public void updateDomain(int rid,int postid, String udomain)throws SQLException
 	{
-		PreparedStatement pst=con.prepareStatement("update jobclass set jobdomain=? where jobid=?");
+		PreparedStatement pst=con.prepareStatement("update jobclass set jobdomain=? where jobid=? and rid=?");
 		pst.setInt(1, postid);
 		pst.setString(2, udomain);
+		pst.setInt(3, rid);
 		int k=pst.executeUpdate();
 		if(k>0)
 		{
@@ -209,7 +225,7 @@ public class JobDaoImpl implements JobDaoInterface {
 		else
 			System.out.println("update failed");
 	}
-	public void updateAllDetails(int postid,JobClass jc,int rid)throws SQLException
+	public void updateAllDetails(int rid,int postid,JobClass jc)throws SQLException
 	{
 		
 		String updateQuery = "UPDATE jobclass SET companyname=?, jobrole=?, job_description=?, qualification=?, keyskill=?, location=?, experience=?, postdate=?, type_of_job=?, domain=? WHERE jobid=? and rid=?";
@@ -229,7 +245,7 @@ public class JobDaoImpl implements JobDaoInterface {
 		int i=pst.executeUpdate();
 		if(i>0)
 		{
-			System.out.println(i+" job posted successfully");
+			System.out.println(i+" job updated successfully");
 		}
 		else
 		{
@@ -242,7 +258,7 @@ public class JobDaoImpl implements JobDaoInterface {
 	
 	
 	
-	
+	//view posted jobs by recruter usecases
 	public void displayByJobRole(String drole)throws SQLException
 	{
 		ResultSet rs=statement.executeQuery("select * from jobclass where jobrole='"+drole+"'");
@@ -343,6 +359,7 @@ public class JobDaoImpl implements JobDaoInterface {
 		}
 	}
 	public void displayByJobid(String djobid)throws SQLException
+
 	{
 		ResultSet rs=statement.executeQuery("select * from jobclass where jobid='"+djobid+"'");
 		while(rs.next())
@@ -351,6 +368,9 @@ public class JobDaoImpl implements JobDaoInterface {
 			System.out.println("JobId: "+rs.getInt(1)+" company name: "+rs.getString(2)+" jobrole:"+rs.getString(3)+" job_description:"+rs.getString(4)+" qualification:"+rs.getString(5)+" keyskill:"+rs.getString(6)+" location:"+rs.getString(7)+" experience:"+rs.getFloat(8)+" postdate:"+rs.getString(9)+" type_of_job"+rs.getString(10)+" domain"+rs.getString(11));
 		}
 	}
+	
+	
+	//search the jobs by jobseeker usecases
 	public void searchByJobRole(String jsjobrole)throws SQLException
 	{
 		ResultSet rs=statement.executeQuery("select * from jobclass where jobrole='"+jsjobrole+"'");
@@ -445,25 +465,27 @@ public class JobDaoImpl implements JobDaoInterface {
 		
 	}
 
+	
+	public void updateExperience(int rid, int postid, float uexp) throws SQLException {
+		
+		
+	}
+
 	@Override
-	public void updateExperience(int postid, float uexp) throws SQLException {
+	public boolean AdminLogin(String jusername, String jpassword) throws SQLException {
 		// TODO Auto-generated method stub
-		
-	}
-	
-	
-	
-		
+		return false;
 	}
 
-
+	@Override
+	public int jobseekerLogin(String jusername, String jpassword) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 
 	
 	
-
-
-
-
-
-
-
+	
+	
+		
+	}
