@@ -35,6 +35,26 @@ public class JobDaoImpl implements JobDaoInterface {
 		return 0;
 		}
 	}
+	public void addRecruter(Recruter rec)throws SQLException
+	{
+		PreparedStatement pst=con.prepareStatement("insert into recruter_table values(?,?,?,?,?)");
+		//pst.setInt(1,rec.getRid());
+		pst.setString(2,rec.getName());
+		pst.setString(3,rec.getCompany_name());
+		pst.setString(4, rec.getDesignation());
+		pst.setString(5, rec.getMail_ID());
+		pst.setLong(6, rec.getMobile_number());
+	
+		int i=pst.executeUpdate();
+		if(i>0)
+		{
+			System.out.println("  signup successfully");
+		}
+		else
+		{
+			System.out.println("signup failed");
+		}
+	}
 	public void addJobSeeker(JobSeeker jsk) throws SQLException
 	{
 		PreparedStatement pst=con.prepareStatement("insert into jobseekertable values(?,?,?,?,?,?,?)");
@@ -59,11 +79,22 @@ public class JobDaoImpl implements JobDaoInterface {
 		
 	}
 	
+	public void displayAllRecruters()throws SQLException{
+		PreparedStatement pst=con.prepareStatement("select * from recrutertable");
+		ResultSet rs=pst.executeQuery();
+		while(rs.next())
+		{
+			//int rid,String name,String company_name,String designation,String mail_ID,Long mobile_number
+			System.out.println("Recruter_ID: "+rs.getInt("rid")+" Recruter name: "+rs.getString("company_name")+" Recruter mail_ID: "+rs.getString("mail_ID")+" Recruter mobile number: "+rs.getLong("mobile_number"));
+		}
+	}
+	
+	
 	
 	public void postJob(int rid,JobClass jc) throws SQLException
 
 	{
-		PreparedStatement pst=con.prepareStatement("insert into jobtable values(?,?,?,?,?,?,?,?,?,?,?)");
+		PreparedStatement pst=con.prepareStatement("insert into jobtable values(?,?,?,?,?,?,?,?,?,?,?,?)");
 		pst.setInt(1, jc.getJobid());
 		pst.setString(2, jc.getCompanyname());
 		pst.setString(3, jc.getJobrole());
@@ -75,6 +106,7 @@ public class JobDaoImpl implements JobDaoInterface {
 		pst.setString(9, jc.getPostdate());
 		pst.setString(10, jc.getType_of_job());
 		pst.setString(11, jc.getDomain());
+		pst.setInt(12, rid);
 		int i=pst.executeUpdate();
 		if(i>0)
 		{
@@ -89,9 +121,9 @@ public class JobDaoImpl implements JobDaoInterface {
 	
 	
 	//delete post usecases
-	public void deletePost(int pid) throws SQLException
+	public void deletePost(int rid,int pid) throws SQLException
 	{
-		int i=statement.executeUpdate("delete * from jobtable where jobid='"+pid+"'");
+		int i=statement.executeUpdate("delete * from jobtable where jobid='"+pid+"' and rid='"+rid+"'");
 		if(i>0)
 		{
 			System.out.println(i+" posts are deleted successfully. ");
@@ -101,9 +133,9 @@ public class JobDaoImpl implements JobDaoInterface {
 			System.out.println("there is no such posts");
 		}
 	}
-	public void deletePost(String jrole)throws SQLException
+	public void deletePost(int rid,String jrole)throws SQLException
 	{
-		int i=statement.executeUpdate("delete * from jobtable where jobrole='"+jrole+"'");
+		int i=statement.executeUpdate("delete * from jobtable where jobrole='"+jrole+"' and rid='"+rid+"'");
 		if(i>0)
 		{
 			System.out.println(i+" posts are deleted successfully. ");
@@ -113,9 +145,9 @@ public class JobDaoImpl implements JobDaoInterface {
 			System.out.println("there is no such posts");
 		}
 	}
-	public void deletePostL(String jlocation)throws SQLException
+	public void deletePostL(int rid,String jlocation)throws SQLException
 	{
-		int i=statement.executeUpdate("delete * from jobtable where location='"+jlocation+"'");
+		int i=statement.executeUpdate("delete * from jobtable where location='"+jlocation+"' and rid='"+rid+"'");
 		if(i>0)
 		{
 			System.out.println(i+" posts are deleted successfully. ");
@@ -125,9 +157,22 @@ public class JobDaoImpl implements JobDaoInterface {
 			System.out.println("there is no such posts");
 		}
 	}
-	public void deletePostdate(String date)throws SQLException
+	public void deletePostdate(int rid,String date)throws SQLException
+
 	{
-		int i=statement.executeUpdate("delete * from jobtable where postdate='"+date+"'");
+		int i=statement.executeUpdate("delete * from jobtable where postdate='"+date+"' and rid='"+rid+"'");
+		if(i>0)
+		{
+			System.out.println(i+" posts are deleted successfully. ");
+		}
+		else 
+		{
+			System.out.println("there is no such posts");
+		}
+	}
+	public void deleteAllPosts(int rid) throws SQLException
+	{
+		int i=statement.executeUpdate("delete * from jobtable where rid='"+rid+"'");
 		if(i>0)
 		{
 			System.out.println(i+" posts are deleted successfully. ");
@@ -259,90 +304,90 @@ public class JobDaoImpl implements JobDaoInterface {
 	
 	
 	//view posted jobs by recruter usecases
-	public void displayByJobRole(String drole)throws SQLException
+	public void displayByJobRole(int rid,String drole)throws SQLException
 	{
-		ResultSet rs=statement.executeQuery("select * from jobclass where jobrole='"+drole+"'");
+		ResultSet rs=statement.executeQuery("select * from jobclass where jobrole='"+drole+"' and rid='"+rid+"'");
 		while(rs.next())
 		{
 			                       //int jobid,String companyname, String jobrole,String job_description,                                                     String qualification, String keyskill, String location,float experience,                          String postdate, String type_of_job, String domain
 			System.out.println("JobId: "+rs.getInt(1)+" company name: "+rs.getString(2)+" jobrole:"+rs.getString(3)+" job_description:"+rs.getString(4)+" qualification:"+rs.getString(5)+" keyskill:"+rs.getString(6)+" location:"+rs.getString(7)+" experience:"+rs.getFloat(8)+" postdate:"+rs.getString(9)+" type_of_job"+rs.getString(10)+" domain"+rs.getString(11));
 		}
 	}
-	public void displayByCompanyName(String dcompany_name)throws SQLException
+	public void displayByCompanyName(int rid,String dcompany_name)throws SQLException
 	{
-		ResultSet rs=statement.executeQuery("select * from jobclass where company_name='"+dcompany_name+"'");
+		ResultSet rs=statement.executeQuery("select * from jobclass where company_name='"+dcompany_name+"' and rid='"+rid+"'");
 		while(rs.next())
 		{
 			                       //int jobid,String companyname, String jobrole,String job_description,String qualification, String keyskill, String location,float experience,String postdate, String type_of_job, String domain
 			System.out.println("JobId: "+rs.getInt(1)+" company name: "+rs.getString(2)+" jobrole:"+rs.getString(3)+" job_description:"+rs.getString(4)+" qualification:"+rs.getString(5)+" keyskill:"+rs.getString(6)+" location:"+rs.getString(7)+" experience:"+rs.getFloat(8)+" postdate:"+rs.getString(9)+" type_of_job"+rs.getString(10)+" domain"+rs.getString(11));
 		}
 	}
-	public void displayByJob_description(String djob_description)throws SQLException
+	public void displayByJob_description(int rid,String djob_description)throws SQLException
 	{
-		ResultSet rs=statement.executeQuery("select * from jobclass where job_description='"+djob_description+"'");
+		ResultSet rs=statement.executeQuery("select * from jobclass where job_description='"+djob_description+"' and rid='"+rid+"'");
 		while(rs.next())
 		{
 			                       //int jobid,String companyname, String jobrole,String job_description,                                                     String qualification, String keyskill, String location,float experience,                          String postdate, String type_of_job, String domain
 			System.out.println("JobId: "+rs.getInt(1)+" company name: "+rs.getString(2)+" jobrole:"+rs.getString(3)+" job_description:"+rs.getString(4)+" qualification:"+rs.getString(5)+" keyskill:"+rs.getString(6)+" location:"+rs.getString(7)+" experience:"+rs.getFloat(8)+" postdate:"+rs.getString(9)+" type_of_job"+rs.getString(10)+" domain"+rs.getString(11));
 		}
 	}
-	public void displayByQualification(String dqualification)throws SQLException
+	public void displayByQualification(int rid,String dqualification)throws SQLException
 	{
-		ResultSet rs=statement.executeQuery("select * from jobclass where qualification='"+dqualification+"'");
+		ResultSet rs=statement.executeQuery("select * from jobclass where qualification='"+dqualification+"'and rid='"+rid+"'");
 		while(rs.next())
 		{
 			                       //int jobid,String companyname, String jobrole,String job_description,                                                     String qualification, String keyskill, String location,float experience,                          String postdate, String type_of_job, String domain
 			System.out.println("JobId: "+rs.getInt(1)+" company name: "+rs.getString(2)+" jobrole:"+rs.getString(3)+" job_description:"+rs.getString(4)+" qualification:"+rs.getString(5)+" keyskill:"+rs.getString(6)+" location:"+rs.getString(7)+" experience:"+rs.getFloat(8)+" postdate:"+rs.getString(9)+" type_of_job"+rs.getString(10)+" domain"+rs.getString(11));
 		}
 	}
-	public void displayByKeyskill(String dkeyskill)throws SQLException
+	public void displayByKeyskill(int rid,String dkeyskill)throws SQLException
 	{
-		ResultSet rs=statement.executeQuery("select * from jobclass where keyskill='"+dkeyskill+"'");
+		ResultSet rs=statement.executeQuery("select * from jobclass where keyskill='"+dkeyskill+"' and rid='"+rid+"'");
 		while(rs.next())
 		{
 			                       //int jobid,String companyname, String jobrole,String job_description,                                                     String qualification, String keyskill, String location,float experience,                          String postdate, String type_of_job, String domain
 			System.out.println("JobId: "+rs.getInt(1)+" company name: "+rs.getString(2)+" jobrole:"+rs.getString(3)+" job_description:"+rs.getString(4)+" qualification:"+rs.getString(5)+" keyskill:"+rs.getString(6)+" location:"+rs.getString(7)+" experience:"+rs.getFloat(8)+" postdate:"+rs.getString(9)+" type_of_job"+rs.getString(10)+" domain"+rs.getString(11));
 		}
 	}
-	public void displayByLocation(String dlocation)throws SQLException
+	public void displayByLocation(int rid,String dlocation)throws SQLException
 	{
-		ResultSet rs=statement.executeQuery("select * from jobclass where location='"+dlocation+"'");
+		ResultSet rs=statement.executeQuery("select * from jobclass where location='"+dlocation+"' and rid='"+rid+"'");
 		while(rs.next())
 		{
 			                       //int jobid,String companyname, String jobrole,String job_description,                                                     String qualification, String keyskill, String location,float experience,                          String postdate, String type_of_job, String domain
 			System.out.println("JobId: "+rs.getInt(1)+" company name: "+rs.getString(2)+" jobrole:"+rs.getString(3)+" job_description:"+rs.getString(4)+" qualification:"+rs.getString(5)+" keyskill:"+rs.getString(6)+" location:"+rs.getString(7)+" experience:"+rs.getFloat(8)+" postdate:"+rs.getString(9)+" type_of_job"+rs.getString(10)+" domain"+rs.getString(11));
 		}
 	}
-	public void displayByExperience(String dexperience)throws SQLException
+	public void displayByExperience(int rid,String dexperience)throws SQLException
 	{
-		ResultSet rs=statement.executeQuery("select * from jobclass where experience='"+dexperience+"'");
+		ResultSet rs=statement.executeQuery("select * from jobclass where experience='"+dexperience+"'and rid='"+rid+"'");
 		while(rs.next())
 		{
 			                       //int jobid,String companyname, String jobrole,String job_description,                                                     String qualification, String keyskill, String location,float experience,                          String postdate, String type_of_job, String domain
 			System.out.println("JobId: "+rs.getInt(1)+" company name: "+rs.getString(2)+" jobrole:"+rs.getString(3)+" job_description:"+rs.getString(4)+" qualification:"+rs.getString(5)+" keyskill:"+rs.getString(6)+" location:"+rs.getString(7)+" experience:"+rs.getFloat(8)+" postdate:"+rs.getString(9)+" type_of_job"+rs.getString(10)+" domain"+rs.getString(11));
 		}
 	}
-	public void displayByPostdate(String dpostdate)throws SQLException
+	public void displayByPostdate(int rid,String dpostdate)throws SQLException
 	{
-		ResultSet rs=statement.executeQuery("select * from jobclass where postdate='"+dpostdate+"'");
+		ResultSet rs=statement.executeQuery("select * from jobclass where postdate='"+dpostdate+"'and rid="+rid+"'");
 		while(rs.next())
 		{
 			                       //int jobid,String companyname, String jobrole,String job_description,                                                     String qualification, String keyskill, String location,float experience,                          String postdate, String type_of_job, String domain
 			System.out.println("JobId: "+rs.getInt(1)+" company name: "+rs.getString(2)+" jobrole:"+rs.getString(3)+" job_description:"+rs.getString(4)+" qualification:"+rs.getString(5)+" keyskill:"+rs.getString(6)+" location:"+rs.getString(7)+" experience:"+rs.getFloat(8)+" postdate:"+rs.getString(9)+" type_of_job"+rs.getString(10)+" domain"+rs.getString(11));
 		}
 	}
-	public void displayByType_of_job(String dtype_of_job)throws SQLException
+	public void displayByType_of_job(int rid,String dtype_of_job)throws SQLException
 	{
-		ResultSet rs=statement.executeQuery("select * from jobclass where type_of_job='"+dtype_of_job+"'");
+		ResultSet rs=statement.executeQuery("select * from jobclass where type_of_job='"+dtype_of_job+"'and rid="+rid+"'");
 		while(rs.next())
 		{
 			                       //int jobid,String companyname, String jobrole,String job_description,                                                     String qualification, String keyskill, String location,float experience,                          String postdate, String type_of_job, String domain
 			System.out.println("JobId: "+rs.getInt(1)+" company name: "+rs.getString(2)+" jobrole:"+rs.getString(3)+" job_description:"+rs.getString(4)+" qualification:"+rs.getString(5)+" keyskill:"+rs.getString(6)+" location:"+rs.getString(7)+" experience:"+rs.getFloat(8)+" postdate:"+rs.getString(9)+" type_of_job"+rs.getString(10)+" domain"+rs.getString(11));
 		}
 	}
-	public void displayByDomain(String ddomain)throws SQLException
+	public void displayByDomain(int rid,String ddomain)throws SQLException
 	{
-		ResultSet rs=statement.executeQuery("select * from jobclass where domain='"+ddomain+"'");
+		ResultSet rs=statement.executeQuery("select * from jobclass where domain='"+ddomain+"'rid='"+rid+"'");
 		while(rs.next())
 		{
 			                       //int jobid,String companyname, String jobrole,String job_description,                                                     String qualification, String keyskill, String location,float experience,                          String postdate, String type_of_job, String domain
@@ -358,16 +403,144 @@ public class JobDaoImpl implements JobDaoInterface {
 			System.out.println("JobId: "+rs.getInt(1)+" company name: "+rs.getString(2)+" jobrole:"+rs.getString(3)+" job_description:"+rs.getString(4)+" qualification:"+rs.getString(5)+" keyskill:"+rs.getString(6)+" location:"+rs.getString(7)+" experience:"+rs.getFloat(8)+" postdate:"+rs.getString(9)+" type_of_job"+rs.getString(10)+" domain"+rs.getString(11));
 		}
 	}
-	public void displayByJobid(String djobid)throws SQLException
+	public void displayByJobid(int rid,String djobid)throws SQLException
 
 	{
-		ResultSet rs=statement.executeQuery("select * from jobclass where jobid='"+djobid+"'");
+		ResultSet rs=statement.executeQuery("select * from jobclass where jobid='"+djobid+"'and rid='"+rid+"'");
 		while(rs.next())
 		{
 			                       //int jobid,String companyname, String jobrole,String job_description,                                                     String qualification, String keyskill, String location,float experience,                          String postdate, String type_of_job, String domain
 			System.out.println("JobId: "+rs.getInt(1)+" company name: "+rs.getString(2)+" jobrole:"+rs.getString(3)+" job_description:"+rs.getString(4)+" qualification:"+rs.getString(5)+" keyskill:"+rs.getString(6)+" location:"+rs.getString(7)+" experience:"+rs.getFloat(8)+" postdate:"+rs.getString(9)+" type_of_job"+rs.getString(10)+" domain"+rs.getString(11));
 		}
 	}
+
+	//update recruter details usecases
+	public void updateRname(int rid,String urname)throws SQLException
+	{
+		PreparedStatement pst=con.prepareStatement("update recruter_table set name=? where rid=?");
+		pst.setString(1,urname);
+		pst.setInt(2, rid);
+		int i=pst.executeUpdate();
+		if(i>0)
+		{
+			System.out.println("name updated successfully");
+		}
+		else
+		{
+			System.out.println("failed");
+		}
+	}
+	public void updateRcompanyname(int rid, String urcompanyname)throws SQLException
+	{
+		PreparedStatement pst=con.prepareStatement("update recruter_table set company_name=? where rid=?");
+		pst.setString(1,urcompanyname);
+		pst.setInt(2, rid);
+		int i=pst.executeUpdate();
+		if(i>0)
+		{
+			System.out.println("company name updated successfully");
+		}
+		else
+		{
+			System.out.println("failed");
+		}
+	}
+	public void updateRdesignation(int rid, String urdesignation)throws SQLException
+	{
+		PreparedStatement pst=con.prepareStatement("update recruter_table set designation=? where rid=?");
+		pst.setString(1,urdesignation);
+		pst.setInt(2, rid);
+		int i=pst.executeUpdate();
+		if(i>0)
+		{
+			System.out.println("designation updated successfully");
+		}
+		else
+		{
+			System.out.println("failed");
+		}
+	}
+	public void updateRmail(int rid, String urmail)throws SQLException
+	{
+		PreparedStatement pst=con.prepareStatement("update recruter_table set mail_ID=? where rid=?");
+		pst.setString(1,urmail);
+		pst.setInt(2, rid);
+		int i=pst.executeUpdate();
+		if(i>0)
+		{
+			System.out.println("mail-ID updated successfully");
+		}
+		else
+		{
+			System.out.println("failed");
+		}
+	}
+	public void updateRMobile(int rid, long urmobile)throws SQLException
+	{
+		PreparedStatement pst=con.prepareStatement("update recruter_table set mobile_number=? where rid=?");
+		pst.setLong(1,urmobile);
+		pst.setInt(2, rid);
+		int i=pst.executeUpdate();
+		if(i>0)
+		{
+			System.out.println("mobile number updated successfully");
+		}
+		else
+		{
+			System.out.println("failed");
+		}
+	}
+	public void updateRAll_Details(int rid, Recruter rec)throws SQLException
+	{
+		PreparedStatement pst=con.prepareStatement("update recruter_table set name=?,company_name=?,designation=?,mobile_number=? where rid=?");
+		pst.setString(1, rec.getName());
+		pst.setString(2,rec.getCompany_name());
+		pst.setString(3, rec.getDesignation());
+		pst.setLong(4,rec.getMobile_number());
+		pst.setInt(5, rid);
+		int i=pst.executeUpdate();
+		if(i>0)
+		{
+			System.out.println("All details updated successfully");
+		}
+		else
+		{
+			System.out.println("failed");
+		}
+	}
+	
+	//displaying applicants of the jobs
+	public void viewApplicants(int rid)throws SQLException
+
+	{
+		String query="select js.jsname as applicant_name,j.jobrole as title from jobseekertable js join applied_jobs aj on js.jsid=aj.jsid join jobtable j on aj.jobid=j.jobid join recruter r on j.rid=r.rid where r.rid=?";
+		PreparedStatement pst=con.prepareStatement(query);
+		ResultSet rs=pst.executeQuery();
+		while(rs.next())
+		{
+			System.out.println("title: "+rs.getString("title")+"Applicant: "+rs.getString("applicant_name"));
+		}
+	}
+	
+	
+	public void deleteRecruter(int rid)throws SQLException
+	{
+		String query="delete * from recruter_table where rid=? ";
+		PreparedStatement pst=con.prepareStatement(query);
+		pst.setInt(1, rid);
+		int i=pst.executeUpdate();
+		if(i>0)
+		{
+			System.out.println("account deleted successfully");
+		}
+		else
+		{
+			System.out.println("account deleting failed");
+		}
+	}
+	
+	
+	
 	
 	
 	//search the jobs by jobseeker usecases
@@ -453,18 +626,180 @@ public class JobDaoImpl implements JobDaoInterface {
 		}
 	}
 
-	@Override
-	public void displayByExperience(float dexp) throws SQLException {
-		// TODO Auto-generated method stub
+	public void applyJob(int jsid, int jobid)throws SQLException{
+		String query="insert into applied_jobs values(?,?)";
+		PreparedStatement pst=con.prepareStatement(query);
+		pst.setInt(1, jsid);
+		pst.setInt(2, jobid);
+		int i=pst.executeUpdate();
+		if(i>0)
+		{
+			System.out.println(i+" job applied successfully");
+		}
+		else
+		{
+			System.out.println(" failed");
+		}
+	}
+	public void deleteAppliedJob(int jsid, int djobid)throws SQLException
+	{
+		String query="delete * from applied_jobs where jsid=? and jobid=?";
+		PreparedStatement pst=con.prepareStatement(query);
+		pst.setInt(1, jsid);
+		pst.setInt(2, djobid);
+		int i=pst.executeUpdate();
+		if(i>0)
+		{
+			System.out.println(i+" job deleted successfully");
+		}
+		else
+		{
+			System.out.println(" failed");
+		}
+	}
+	public void viewAllAppliedJobs(int jsid)throws SQLException
+	{
+		String query="SELECT * FROM jobtable j JOIN applied_jobs aj ON j.job_id = aj.job_id JOIN jobseekertable js ON aj.jobseeker_id = js.jsid JOIN recruter r ON j.rid = r.rid WHERE js.jsid = ?";
+		PreparedStatement pst=con.prepareStatement(query);
+		pst.setInt(1, jsid);
+		ResultSet rs=pst.executeQuery();
+		while(rs.next())
+		{
+			System.out.println("jobID: "+rs.getInt("jobid")+" jobrole: "+rs.getString("jobrole")+" Company name: "+rs.getString("companyname")+" job_description: "+rs.getString("job_description")+" qualification: "+rs.getString("qualification")+" keyskill: "+rs.getString("keyskill")+" location: "+rs.getString("location")+" experience:"+rs.getFloat("experience")+" postdate: "+rs.getString("postdate")+" type_of_job: "+rs.getString("type_of_job")+" domain: "+rs.getString("domain"));
+			
+		}
+	}
+	
+	//updating jobseeker details usecases
+	
+	public void updateJSName(int jsid, String ujsname)throws SQLException
+	{
+		PreparedStatement pst=con.prepareStatement("update jobseekertable set jsname=? where jsid=?");
+		pst.setString(1,ujsname);
+		pst.setInt(2, jsid);
+		int i=pst.executeUpdate();
+		if(i>0)
+		{
+			System.out.println("name updated successfully");
+		}
+		else
+		{
+			System.out.println("failed");
+		}
+	}
+	public void updateJSMail_Id(int jsid, String ujsmail)throws SQLException
+	{
+		PreparedStatement pst=con.prepareStatement("update jobseekertable set mail_ID=? where jsid=?");
+		pst.setString(1,ujsmail);
+		pst.setInt(2, jsid);
+		int i=pst.executeUpdate();
+		if(i>0)
+		{
+			System.out.println("mail updated successfully");
+		}
+		else
+		{
+			System.out.println("failed");
+		}
+	}
+	public void updateJSMobile(int jsid, long ujsmobile)throws SQLException
+	{
+		PreparedStatement pst=con.prepareStatement("update jobseekertable set mobile_number=? where jsid=?");
+		pst.setLong(1,ujsmobile);
+		pst.setInt(2, jsid);
+		int i=pst.executeUpdate();
+		if(i>0)
+		{
+			System.out.println("mobile number updated successfully");
+		}
+		else
+		{
+			System.out.println("failed");
+		}
+	}
+	public void updateJSKeyskills(int jsid, String ujskeyskills)throws SQLException
+	{
+		PreparedStatement pst=con.prepareStatement("update jobseekertable set key_skills=? where jsid=?");
+		pst.setString(1,ujskeyskills);
+		pst.setInt(2, jsid);
+		int i=pst.executeUpdate();
+		if(i>0)
+		{
+			System.out.println("key skills updated successfully");
+		}
+		else
+		{
+			System.out.println("failed");
+		}
+	}
+	public void updateJSAge(int jsid, int ujsage)throws SQLException{
+		PreparedStatement pst=con.prepareStatement("update jobseekertable set age=? where jsid=?");
+		pst.setInt(1,ujsage);
+		pst.setInt(2, jsid);
+		int i=pst.executeUpdate();
+		if(i>0)
+		{
+			System.out.println("age  updated successfully");
+		}
+		else
+		{
+			System.out.println("failed");
+		}
+	}
+	public void updateJSEducation(int jsid, String ujseducation)throws SQLException{
+		PreparedStatement pst=con.prepareStatement("update jobseekertable set education=? where jsid=?");
+		pst.setString(1,ujseducation);
+		pst.setInt(2, jsid);
+		int i=pst.executeUpdate();
+		if(i>0)
+		{
+			System.out.println("education updated successfully");
+		}
+		else
+		{
+			System.out.println("failed");
+		}
 		
 	}
-
-	@Override
-	public void displayByJobid(int djobid) throws SQLException {
-		// TODO Auto-generated method stub
-		
+	public void updateJSAddress(int jsid, String ujsaddress)throws SQLException
+	{
+		PreparedStatement pst=con.prepareStatement("update jobseekertable set address=? where jsid=?");
+		pst.setString(1,ujsaddress);
+		pst.setInt(2, jsid);
+		int i=pst.executeUpdate();
+		if(i>0)
+		{
+			System.out.println("Address updated successfully");
+		}
+		else
+		{
+			System.out.println("failed");
+		}
 	}
-
+	public void updateAllJobSeekerDetails(int jsid, String ujsname, String ujsmail, long ujsmobile, String ujskeyskills,
+			int ujsage, String ujseducation, String ujsaddress)throws SQLException{
+		PreparedStatement pst=con.prepareStatement("update jobseekertable set jsname=?,mail_ID=?,mobile_number=?,key_skills=?,age=?,education=?,address=? where jsid=?");
+		pst.setString(1, ujsname);
+		pst.setString(2, ujsmail);
+		pst.setLong(3, ujsmobile);
+		pst.setString(4, ujskeyskills);
+		pst.setInt(5, ujsage);
+		pst.setString(6, ujseducation);
+		pst.setString(7,ujsaddress);
+		
+		pst.setInt(8, jsid);
+		int i=pst.executeUpdate();
+		if(i>0)
+		{
+			System.out.println("All details  updated successfully");
+		}
+		else
+		{
+			System.out.println("failed");
+		}
+	}
+	
+	
 	
 	public void updateExperience(int rid, int postid, float uexp) throws SQLException {
 		
@@ -481,6 +816,42 @@ public class JobDaoImpl implements JobDaoInterface {
 	public int jobseekerLogin(String jusername, String jpassword) {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+
+	@Override
+	public void displayByExperience(int rid, float dexp) throws SQLException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void displayByJobid(int rid, int djobid) throws SQLException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void updateCompanyName(int rid, int postid, String ucompanyname) throws SQLException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void updateJob_Desc(int rid, int postid, String ujob_desc) throws SQLException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void updateQualification(int rid, int postid, String uqualification) throws SQLException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void updateKeySkills(int rid, int postid, String ukeyskills) throws SQLException {
+		// TODO Auto-generated method stub
+		
 	}
 
 	

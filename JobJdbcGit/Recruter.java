@@ -17,6 +17,9 @@ public class Recruter {
 		this.mail_ID=mail_ID;
 		this.mobile_number=mobile_number;
 	}
+	public Recruter() {
+		// TODO Auto-generated constructor stub
+	}
 	public int getRid() {
 		return rid;
 	}

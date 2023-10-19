@@ -4,16 +4,15 @@ import java.sql.SQLException;
 import java.util.*;
 
 
-/**
- * Hello world!
- *
- */public class App 
+public class App 
  {
 		JobDaoInterface jdi=new JobDaoImpl();
 		JobSeeker jsk=new JobSeeker();
+		Recruter rec=new Recruter();
 		public void loginModule() throws SQLException
+
 		{
-			
+
 			Scanner sc=new Scanner(System.in);
 			System.out.println("welcome to jobportal  \n 1.signin  2.signup \n please enter choice ");
 			int choice=sc.nextInt();
@@ -86,19 +85,26 @@ import java.util.*;
 				switch(ch1)
 				{
 				case 1:
-					//String name,String company_name,String designation,String mail_ID,Long mobile_number
+					
 					System.out.println("enter your name");
 					String rname=sc.nextLine();
+					rec.setName(rname);
 					System.out.println("enter your company name");
 					String companyName=sc.nextLine();
+					rec.setCompany_name(companyName);
 					System.out.println("enter your designation");
 					String designation=sc.next();
-					System.out.println("enter your mainId");
+					rec.setDesignation(designation);
+					System.out.println("enter your mailId");
 					String email=sc.next();
+					rec.setMail_ID(email);
 					System.out.println("enter mobile number");
 					long mobile=sc.nextLong();
+					rec.setMobile_number(mobile);
+					jdi.addRecruter(rec);
+					break;
 				case 2:
-				//public JobSeeker(int jsid, String jsname, String mail_ID,* Long mobile_number, String key_skills, int age,string education, String address) {
+			 
 					System.out.println("enter your name");
 					String jsname=sc.nextLine();
 					jsk.setJsname(jsname);
@@ -121,6 +127,7 @@ import java.util.*;
 					String jsaddress=sc.nextLine();
 					jsk.setAddress(jsaddress);
 					jdi.addJobSeeker(jsk);
+					break;
 					
 					
 				}
@@ -133,9 +140,10 @@ import java.util.*;
 			
 			
 		}
-		public void jobSeekerMenu(int jid) throws SQLException {
+		public void jobSeekerMenu(int jsid) throws SQLException {
 	    	Scanner sc=new Scanner(System.in);
-	    	System.out.println("welcome to jobseeker module 1.search jobs \n 2.apply \n 3.save jobs \n 4.delete jobs \n enter your choice");
+	    	
+	    	System.out.println("welcome to jobseeker module 1.search jobs \n 2.apply  \n 3.delete applied jobs \n 4.update profile \n 5.view applied jobs \n enter your choice");
 	    	int ch=sc.nextInt();
 	    	switch(ch)
 	    	{
@@ -194,6 +202,85 @@ import java.util.*;
 	    					break;
 	    					
 	    			}
+	    		case 2:
+	    			System.out.println("enter jobid to apply");
+	    			int jobid=sc.nextInt();
+	    			jdi.applyJob(jsid,jobid);
+	    			break;
+	    		case 3:
+	    			System.out.println("enter jobid to delete");
+	    			int djobid=sc.nextInt();
+	    			jdi.deleteAppliedJob(jsid,djobid);
+	    			break;
+	    		case 4:
+	    			
+	    			System.out.println("what dou you want to update \n 1.name \n 2.mail_ID \n 3.mobilenumber  \n 4.keyskills \n 5.age \n 6.education \n 7.address \n 8. All details \n enter your choice");
+	    			int ch6=sc.nextInt();
+	    			switch(ch6)
+	    			{
+	    				case 1:
+	    					System.out.println("enter updated name");
+	    					String ujsname=sc.next();
+	    					jdi.updateJSName(jsid,ujsname);
+	    					break;
+	    				case 2:
+	    					System.out.println("enter updated mail_id");
+	    					String ujsmail=sc.next();
+	    					jdi.updateJSMail_Id(jsid,ujsmail);
+	    					break;
+	    				case 3:
+	    					System.out.println("enter updated mobile number");
+	    					long ujsmobile=sc.nextLong();
+	    					jdi.updateJSMobile(jsid,ujsmobile);
+	    					break;
+	    				case 4:
+	    					System.out.println("enter updated keyskills");
+	    					String ujskeyskills=sc.nextLine();
+	    					jdi.updateJSKeyskills(jsid,ujskeyskills);
+	    					break;
+	    				case 5:
+	    					System.out.println("enter updated age");
+	    					int ujsage=sc.nextInt();
+	    					jdi.updateJSAge(jsid,ujsage);
+	    					break;
+	    				case 6:
+	    					System.out.println("enter updated education");
+	    					String ujseducation=sc.next();
+	    					jdi.updateJSEducation(jsid,ujseducation);
+	    					break;
+	    				case 7:
+	    					System.out.println("enter updated address");
+	    					String ujsaddress=sc.nextLine();
+	    					jdi.updateJSAddress(jsid,ujsaddress);
+	    					break;
+	    				case 8:
+	    					System.out.println("enter updated name");
+	    					 ujsname=sc.next();
+	    					System.out.println("enter updated mail_id");
+	    					 ujsmail=sc.next();
+	    					System.out.println("enter updated mobile number");
+	    					ujsmobile=sc.nextLong();
+	    					System.out.println("enter updated keyskills");
+	    					 ujskeyskills=sc.nextLine();
+	    					System.out.println("enter updated age");
+		    				ujsage=sc.nextInt();
+		    				System.out.println("enter updated education");
+	    					ujseducation=sc.next();
+	    					System.out.println("enter updated address");
+	    					ujsaddress=sc.nextLine();
+	    					jdi.updateAllJobSeekerDetails(jsid,ujsname,ujsmail,ujsmobile,ujskeyskills,ujsage,ujseducation,ujsaddress);
+	    					break;
+	    				default:
+	    					System.out.println("wrong choice");
+	    			}
+	    			break;
+	    		case 5:
+	    			jdi.viewAllAppliedJobs(jsid);
+	    			break;
+	    		default:
+	    			System.out.println("wrong choice");
+	    			break;
+	    			
 	    	}
 	    	sc.close();
 			
@@ -211,7 +298,7 @@ import java.util.*;
 			JobClass jc=new JobClass();
 			
 			
-			System.out.println("Welcome to recruter Menu \n 1.post a job 2.update  job details \n 3.delete post \n 4.view post \n please enter your choice");
+			System.out.println("Welcome to recruter Menu \n 1.post a job \n 2.update  job details \n 3.delete post \n 4.view post  \n 5. update profile \n 6. view applicants \n 7.delete profile \n please enter your choice");
 			int ch=sc.nextInt();
 			switch(ch)
 			{
@@ -259,7 +346,7 @@ import java.util.*;
 			case 2:
 				System.out.println("enter post id");
 				int postid=sc.nextInt();
-				System.out.println("what do tou want to update in the post \n 1.jobrole \t 2.company_name \t 3.job_description \t 4.qualification \n 5.keyskill \t 6.location \t 7.experience \t 8.postdate \t 9.type_of_job \t  10.domain \t 11. entire post \n enter your choice");
+				System.out.println("what do tou want to update in the post \n 1.jobrole \t 2.company_name \t 3.job_description \t 4.qualification \n 5.keyskill \t 6.location \t 7.experience \t 8.postdate \t 9.type_of_job \t  10.domain \t 11. updateAll post_details \n enter your choice");
 				int ch2=sc.nextInt();
 				switch(ch2)
 				{
@@ -269,31 +356,52 @@ import java.util.*;
 						jdi.updateRole(rid,postid,urole);
 						break;
 					case 2:
+						System.out.println("enter updated company name");
+						String ucompanyname=sc.next();
+						jdi.updateCompanyName(rid,postid,ucompanyname);
+						break;
+					case 3:
+						System.out.println("enter updated job_description");
+						String ujob_desc=sc.next();
+						jdi.updateJob_Desc(rid,postid,ujob_desc);
+						break;
+					case 4:
+						System.out.println("enter updated qualification");
+						String uqualification=sc.next();
+						jdi.updateQualification(rid,postid,uqualification);
+						break;
+					case 5:
+						System.out.println("enter updated key skills");
+						String ukeyskills=sc.next();
+						jdi.updateKeySkills(rid,postid,ukeyskills);
+						break;						
+						
+					case 6:
 						System.out.println("enter updated location");
 						String ulocation=sc.next();
 						jdi.updateLocation(rid,postid,ulocation);
 						break;
-					case 3:
+					case 7:
 						System.out.println("enter updated experience");
 						float uexp=sc.nextFloat();
 						jdi.updateExperience(rid,postid,uexp);
 						break;
-					case 4:
+					case 8:
 						System.out.println("enter updated post date");
 						String udate=sc.next();
 						jdi.updatePostdate(rid,postid,udate);
 						break;
-					case 5:
+					case 9:
 						System.out.println("enter updated type of job");
 						String utype=sc.next();
 						jdi.updateType_of_job(rid,postid,utype);
 						break;
-					case 6:
+					case 10:
 						System.out.println("enter updated domian");
 						String udomain=sc.next();
 						jdi.updateDomain(rid,postid,udomain);
 						break;
-					case 7:
+					case 11:
 						System.out.println("enter jobId");
 						int uid=sc.nextInt();
 						jc.setJobid(uid);
@@ -309,12 +417,12 @@ import java.util.*;
 						jc.setJob_description(udescription);
 						sc.nextLine();
 						System.out.println("enter required qualification");
-						String uqualification=sc.nextLine();
-						jc.setQualification(uqualification);
+						String uaqualification=sc.nextLine();
+						jc.setQualification(uaqualification);
 						sc.nextLine();
 						System.out.println("enter required key skills");
-						String ukeyskills=sc.nextLine();
-						jc.setKeyskill(ukeyskills);
+						String uakeyskills=sc.nextLine();
+						jc.setKeyskill(uakeyskills);
 						sc.nextLine();
 						System.out.println("enter work location");
 						String uplocation=sc.nextLine();
@@ -334,36 +442,35 @@ import java.util.*;
 						jc.setDomain(updomain);
 						jdi.updateAllDetails(rid,postid,jc);
 						break;
-						
-						
-						
-						
-					
-				}
+						}
+				break;
 			case 3:
-				System.out.println("do you want to delete by \n 1. postID  2. Job role 3.location 4.postdate  \n enter your choice");
+				System.out.println("do you want to delete by \n 1. postID  2. Job role 3.location 4.postdate 5.delete all posts \n enter your choice");
 				int ch1=sc.nextInt();
 				switch(ch1)
 				{
 				case 1:
 					System.out.println("enter post id");
 					int pid=sc.nextInt();
-					jdi.deletePost(pid);
+					jdi.deletePost(rid,pid);
 					break;
 				case 2:
 					System.out.println("enter jobrole");
 					String jrole=sc.next();
-					jdi.deletePost(jrole);
+					jdi.deletePost(rid,jrole);
 					break;
 				case 3:
 					System.out.println("enter location");
 					String jlocation=sc.next();
-					jdi.deletePostL(jlocation);
+					jdi.deletePostL(rid,jlocation);
 					break;
 				case 4:
 					System.out.println("enter postdate");
 					String date=sc.next();
-					jdi.deletePostdate(date);
+					jdi.deletePostdate(rid,date);
+					break;
+				case 5:
+					jdi.deleteAllPosts(rid);
 					break;
 				default:
 					System.out.println("wrong choice");
@@ -372,59 +479,59 @@ import java.util.*;
 				}
 				break;
 			case 4:
-				System.out.println("view by  1.jobrole \\t 2.company_name \\t 3.job_description \\t 4.qualification \\n 5.keyskill \\t 6.location \\t 7.experience \\t 8.postdate \\t 9.type_of_job \\t  10.domain \\t 11. entire post 12.jobid \\n enter your choice");
+				System.out.println("view by  1.jobrole \\t 2.company_name \\t 3.job_description \\t 4.qualification \\n 5.keyskill \\t 6.location \\t 7.experience \\t 8.postdate \\t 9.type_of_job \\t  10.domain \\t 11. all posts \t 12.jobid \\n enter your choice");
 				int ch4=sc.nextInt();
 				switch(ch4)
 				{
 					case 1:
 						System.out.println("enter jobrole");
 						String drole=sc.next();
-						jdi.displayByJobRole(drole);
+						jdi.displayByJobRole(rid,drole);
 						break;
 					case 2:
 						System.out.println("enter companyname");
 						String cname=sc.next();
-						jdi.displayByCompanyName(cname);
+						jdi.displayByCompanyName(rid,cname);
 						break;
 					case 3:
 						System.out.println("enter job_description");
 						String jdes=sc.nextLine();
-						jdi.displayByJob_description(jdes);
+						jdi.displayByJob_description(rid,jdes);
 						break;
 					case 4:
 						System.out.println("enter qualification");
 						String qua=sc.nextLine();
-						jdi.displayByQualification(qua);
+						jdi.displayByQualification(rid,qua);
 						break;
 					case 5:
 						System.out.println("enter keyskills");
 						String dkeyskills=sc.nextLine();
-						jdi.displayByKeyskill(dkeyskills);
+						jdi.displayByKeyskill(rid,dkeyskills);
 						break;
 					case 6:
 						System.out.println("enter location");
 						String dlocation=sc.nextLine();
-						jdi.displayByLocation(dlocation);
+						jdi.displayByLocation(rid,dlocation);
 						break;
 					case 7:
 						System.out.println("enter Experience");
 						float dexp=sc.nextFloat();
-						jdi.displayByExperience(dexp);
+						jdi.displayByExperience(rid,dexp);
 						break;
 					case 8:
 						System.out.println("enter postdate");
 						String dpostdate=sc.next();
-						jdi.displayByPostdate(dpostdate);
+						jdi.displayByPostdate(rid,dpostdate);
 						break;
 					case 9:
 						System.out.println("enter type of job");
 						String dtypeofjob=sc.next();
-						jdi.displayByType_of_job(dtypeofjob);
+						jdi.displayByType_of_job(rid,dtypeofjob);
 						break;
 					case 10:
 						System.out.println("enter type of domain");
 						String ddomain=sc.next();
-						jdi.displayByDomain(ddomain);
+						jdi.displayByDomain(rid,ddomain);
 						break;
 					case 11:
 						jdi.displayAll();
@@ -432,29 +539,89 @@ import java.util.*;
 					case 12:
 						System.out.println("enter jobid");
 						int djobid=sc.nextInt();
-						jdi.displayByJobid(djobid);
+						jdi.displayByJobid(rid,djobid);
 						break;
 					default:
 						System.out.println("wrong choice");
 						break;
 					}
-				
-				
-				
-				
-				
-				
-				
-			}
+				break;
+			case 5:
+				//String name,String company_name,String designation,String mail_ID,Long mobile_number
+				System.out.println("what do you want to update in your profile:\n 1.name \n 2. company name \n 3.designation \n 4.mail_ID \n 5.mobile_number \n 6.All details \n enter your choice");
+				int ch5=sc.nextInt();
+				switch(ch5)
+				{
+					case 1:
+						System.out.println("enter updated name");
+						String urname=sc.next();
+						jdi.updateRname(rid,urname);
+						break;
+					case 2:
+						System.out.println("enter updated company_name");
+						String urcompanyname=sc.next();
+						jdi.updateRcompanyname(rid,urcompanyname);
+						break;
+					case 3:
+						System.out.println("enter updated designation");
+						String urdesignation=sc.next();
+						jdi.updateRdesignation(rid,urdesignation);
+						break;
+					case 4:
+						System.out.println("enter updated mail_ID");
+						String urmail=sc.next();
+						jdi.updateRmail(rid,urmail);
+						break;
+					case 5:
+						System.out.println("enter updated mobile number");
+						long urmobile=sc.nextLong();
+						jdi.updateRMobile(rid,urmobile);
+						break;
+					case 6:
+						System.out.println("enter your name");
+						String rname=sc.nextLine();
+						rec.setName(rname);
+						System.out.println("enter your company name");
+						String companyName=sc.nextLine();
+						rec.setCompany_name(companyName);
+						System.out.println("enter your designation");
+						String designation=sc.next();
+						rec.setDesignation(designation);
+						System.out.println("enter your mailId");
+						String email=sc.next();
+						rec.setMail_ID(email);
+						System.out.println("enter mobile number");
+						long mobile=sc.nextLong();
+						rec.setMobile_number(mobile);
+						jdi.updateRAll_Details(rid,rec);
+						break;
+					default:
+						System.out.println("wrong choice");
+				}
+				break;
+			case 6:
+				System.out.println("displaying the applicants");
+				jdi.viewApplicants(rid);
+				break;
+			case 7:
+				jdi.deleteRecruter(rid);
+				break;
+			default:
+				System.out.println("wrong choice");
+				break;
 			
+			}		
 			
 			
 			sc.close();
 			
 		}
 
-	    public static void main( String[] args )
+	    public static void main( String[] args ) throws SQLException
 	    {
-	        System.out.println( "Hello World!" );
+	       // System.out.println( "welcome to jobportal" );
+	        App a=new App();
+	        a.loginModule();
 	    }
 	}
+

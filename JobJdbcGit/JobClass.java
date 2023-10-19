@@ -3,7 +3,7 @@ package bitlabs123.jobportal_JDBC;
 
 public class JobClass {
 	private String companyname;
-    private int jobid;
+    private int jobid,rid;
     private String jobrole; 
     private String qualification;
     private String keyskill;
@@ -28,7 +28,13 @@ public class JobClass {
         this.type_of_job = type_of_job;
         this.domain = domain;
     }
-    public JobClass() {
+    public int getRid() {
+		return rid;
+	}
+	public void setRid(int rid) {
+		this.rid = rid;
+	}
+	public JobClass() {
 		// TODO Auto-generated constructor stub
 	}
 	public String getJob_description() {
