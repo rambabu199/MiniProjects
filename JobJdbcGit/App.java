@@ -1,6 +1,7 @@
-package bitlabs123.jobportal_JDBC;
+package com.bitlabs.jobportaljdbc;
 
-import java.sql.SQLException;
+import java.sql.PreparedStatement;
+import java.sql.*;
 import java.util.*;
 
 
@@ -14,7 +15,7 @@ public class App
 		{
 
 			Scanner sc=new Scanner(System.in);
-			System.out.println("welcome to jobportal  \n 1.signin  2.signup \n please enter choice ");
+			System.out.println("welcome  to jobportal  \n 1.signin  2.signup \n please enter choice ");
 			int choice=sc.nextInt();
 			switch(choice)
 			{
@@ -85,7 +86,7 @@ public class App
 				switch(ch1)
 				{
 				case 1:
-					
+					String username,password;
 					System.out.println("enter your name");
 					String rname=sc.nextLine();
 					rec.setName(rname);
@@ -101,7 +102,16 @@ public class App
 					System.out.println("enter mobile number");
 					long mobile=sc.nextLong();
 					rec.setMobile_number(mobile);
+					do {
+					System.out.println("enter your user name \n username lenght should be grater then 8 and must be unique");
+					 username=sc.next();
+					}while(jdi.validateUsername(username));
+					do {
+						System.out.println("enter your password \n password contain atleast (one uppercase letter, one lowercase letter, one digit, one special charector) minimum size =8");
+						password=sc.next();
+					}while(jdi.validatePassword(password));
 					jdi.addRecruter(rec);
+					
 					break;
 				case 2:
 			 
@@ -136,15 +146,59 @@ public class App
 			sc.close();
 			
 		}
-	    private void adminMenu() {
-			
+	    
+		private void adminMenu() throws SQLException {
+	    	Scanner sc=new Scanner(System.in);
+	    	int choice;
+	    	System.out.println("welcome to Admin page");
+	    	do {
+	    	System.out.println("1.view All Recruters \n 2.View All Job Seekers \n 3.View All job posts \n 4.Remove Recruter \n 5.Remove Jobseeker \n 6.Remove Post 7.logout");
+	    	System.out.println("enter your choice");
+			 choice=sc.nextInt();
+			switch(choice)
+			{
+				case 1:
+					jdi.displayAllRecruters();
+					break;
+				case 2:
+					jdi.displayAllJob_Seekers();
+					break;
+				case 3:
+					jdi.displayAllJobPosts();
+					break;
+				case 4:
+					System.out.println("enter recruter id");
+					int rid=sc.nextInt();
+					jdi.removeRecruter(rid);
+					break;
+				case 5:
+					System.out.println("enter jobseeker id");
+					int jsid=sc.nextInt();
+					jdi.removeJobSeeker(jsid);
+					break;
+				case 6:
+					System.out.println("enter jobpost id");
+					int jobid=sc.nextInt();
+					jdi.removeJob(jobid);
+					break;
+				case 7:
+					System.out.println("log out successfully");
+					break;
+				default:
+					System.out.println("wrong choice please enter again");
+					break;
+					
+			}
+	    	}while(choice!=7);
+	    	sc.close();
 			
 		}
 		public void jobSeekerMenu(int jsid) throws SQLException {
 	    	Scanner sc=new Scanner(System.in);
-	    	
-	    	System.out.println("welcome to jobseeker module 1.search jobs \n 2.apply  \n 3.delete applied jobs \n 4.update profile \n 5.view applied jobs \n enter your choice");
-	    	int ch=sc.nextInt();
+	    	int ch;
+	    	do {
+	    	System.out.println("welcome to jobseeker module 1.search jobs \n 2.apply  \n 3.delete applied jobs \n 4.update profile \n 5.view applied jobs \n 6.logout \n enter your choice");
+	    	 ch=sc.nextInt();
 	    	switch(ch)
 	    	{
 	    		case 1:
@@ -272,34 +326,32 @@ public class App
 	    					break;
 	    				default:
 	    					System.out.println("wrong choice");
+	    					break;
 	    			}
 	    			break;
 	    		case 5:
 	    			jdi.viewAllAppliedJobs(jsid);
+	    			break;
+	    		case 6:
+	    			System.out.println("logout successfully");
 	    			break;
 	    		default:
 	    			System.out.println("wrong choice");
 	    			break;
 	    			
 	    	}
+	    	}while(ch!=6);
 	    	sc.close();
 			
 		}
-		//private void adminMenu() {
-			
-			
-		//}      
-//		private void recruterMenu() {
-			
-			
-		//}
+		
 		public void recruterMenu(int rid) throws SQLException {
 			Scanner sc=new Scanner(System.in);
 			JobClass jc=new JobClass();
-			
-			
-			System.out.println("Welcome to recruter Menu \n 1.post a job \n 2.update  job details \n 3.delete post \n 4.view post  \n 5. update profile \n 6. view applicants \n 7.delete profile \n please enter your choice");
-			int ch=sc.nextInt();
+			int ch;
+			do {
+			System.out.println("Welcome to recruter Menu \n 1.post a job \n 2.update  job details \n 3.delete post \n 4.view post  \n 5. update profile \n 6. view applicants \n 7.delete profile  \n 8.logout \n please enter your choice");
+			ch=sc.nextInt();
 			switch(ch)
 			{
 			case 1:
@@ -606,11 +658,15 @@ public class App
 			case 7:
 				jdi.deleteRecruter(rid);
 				break;
+			case 8:
+				System.out.println("logout successfully");
+				break;
 			default:
 				System.out.println("wrong choice");
 				break;
 			
 			}		
+			}while(ch!=8);
 			
 			
 			sc.close();
@@ -624,4 +680,3 @@ public class App
 	        a.loginModule();
 	    }
 	}
-

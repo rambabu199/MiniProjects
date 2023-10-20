@@ -1,11 +1,9 @@
-package bitlabs123.jobportal_JDBC;
+package com.bitlabs.jobportaljdbc;
 
-import java.sql.Connection;
 import java.sql.*;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+
+
+
 public class JobDaoImpl implements JobDaoInterface {
 	Connection con;
 	Statement statement;
@@ -23,6 +21,78 @@ public class JobDaoImpl implements JobDaoInterface {
 		}
 	}
 	
+	public boolean validateUsername(String username)throws SQLException
+	{
+		 if (username.length() < 8) {
+	            System.out.println("Username should be at least 8 characters long.");
+	            return false;
+	        } else {
+	            try {
+	                String selectQuery = "SELECT COUNT(*) FROM users WHERE username = ?";
+	                PreparedStatement selectStatement = con.prepareStatement(selectQuery);
+	                selectStatement.setString(1, username);
+
+	                ResultSet resultSet = selectStatement.executeQuery();
+	                resultSet.next();
+	                int count = resultSet.getInt(1);
+
+	                if (count > 0) {
+	                    System.out.println("Username is not unique. Please choose another username.");
+	                    return false;
+	                }
+
+	                return true; // Username is valid and unique.
+
+	            } catch (SQLException e) {
+	                e.printStackTrace();
+	                return false; // Error occurred, treat as not valid.
+	            }
+	        }
+	    }
+	public boolean validatePassword(String password)throws SQLException
+	{
+		 if (password.length() < 8) {
+	            System.out.println("Password should be at least 8 characters long.");
+	            return false;
+	        }
+
+	        boolean hasUppercase = false;
+	        boolean hasLowercase = false;
+	        boolean hasDigit = false;
+	        boolean hasSpecialChar = false;
+
+	        for (char c : password.toCharArray()) {
+	            if (Character.isUpperCase(c)) {
+	                hasUppercase = true;
+	            } else if (Character.isLowerCase(c)) {
+	                hasLowercase = true;
+	            } else if (Character.isDigit(c)) {
+	                hasDigit = true;
+	            } else if (!Character.isLetterOrDigit(c)) {
+	                hasSpecialChar = true;
+	            }
+	        }
+
+	        if (hasUppercase && hasLowercase && hasDigit && hasSpecialChar) {
+	            return true; // Password is valid.
+	        } else {
+	            System.out.println("Password is not valid. ");
+	            return false;
+	        }
+	    }
+	
+	
+	@Override
+	public boolean AdminLogin(String jusername, String jpassword) throws SQLException {
+		ResultSet rs=statement.executeQuery("select * from reg_table where username='"+jusername+"' and password='"+jpassword+"'");
+		if(rs.next())
+		{
+			return true;
+		}
+		else
+		return false;
+	}
+	
 	public int recruterLogin(String username, String password) throws SQLException
 	{
 		ResultSet rs=statement.executeQuery("select * from reg_table where username='"+username+"' and password='"+password+"'");
@@ -35,6 +105,18 @@ public class JobDaoImpl implements JobDaoInterface {
 		return 0;
 		}
 	}
+	public int jobseekerLogin(String jusername, String jpassword) throws SQLException {
+		ResultSet rs=statement.executeQuery("select * from reg_table where username='"+jusername+"' and password='"+jpassword+"'");
+		if(rs.next())
+		{
+			
+			return rs.getInt(1);
+		}
+		else {
+		return 0;
+		}
+	}
+	
 	public void addRecruter(Recruter rec)throws SQLException
 	{
 		PreparedStatement pst=con.prepareStatement("insert into recruter_table values(?,?,?,?,?)");
@@ -78,7 +160,9 @@ public class JobDaoImpl implements JobDaoInterface {
 		//statement.executeUpdate("insert into jobseeker values(?,?,?,?,?,?,?)");
 		
 	}
+
 	
+	//admin usecases
 	public void displayAllRecruters()throws SQLException{
 		PreparedStatement pst=con.prepareStatement("select * from recrutertable");
 		ResultSet rs=pst.executeQuery();
@@ -89,6 +173,70 @@ public class JobDaoImpl implements JobDaoInterface {
 		}
 	}
 	
+	public void displayAllJob_Seekers()throws SQLException
+	{
+		PreparedStatement pst=con.prepareStatement("select * from jobseekertable");
+		ResultSet rs=pst.executeQuery();
+		while(rs.next())
+		{
+			  
+			System.out.println("JobSeeker_ID: "+rs.getInt("jsid")+" JobSeeker name: "+rs.getString("jsname")+" JobSeeker mail_ID: "+rs.getString("mail_ID")+" JobSeeker mobile number: "+rs.getLong("mobile_number")+" key skills"+rs.getString("key_skills")+" age:"+rs.getInt("age")+" education: "+rs.getString("education")+" Address"+rs.getString("address"));
+		}
+	}
+	public void displayAllJobPosts()throws SQLException
+	{
+		PreparedStatement pst=con.prepareStatement("select * from jobclasstable");
+		ResultSet rs=pst.executeQuery();
+		while(rs.next())
+		{
+			  
+			System.out.println("Job_ID: "+rs.getInt("jobid")+" Company name: "+rs.getString("companyname")+" Jobrole: "+rs.getString("jobrole")+" JobDescription: "+rs.getString("job_description")+" Qualification: "+rs.getString("qualification")+" key skills"+rs.getString("keyskills")+" location:"+rs.getString("location")+" experience: "+rs.getFloat("experience")+" postdate"+rs.getString("postdate")+" type_of_job:"+rs.getString("type_of_job")+"domain"+rs.getString("domain"));
+		}
+	}
+	
+	public void removeRecruter(int rid)throws SQLException{
+		PreparedStatement pst=con.prepareStatement("delete * from recrutertable where rid=?");
+		pst.setInt(1, rid);
+		int i=pst.executeUpdate();
+		if(i>0)
+		{
+			System.out.println(i+" recruter is removed successfully");
+		}
+		else
+		{
+			System.out.println("no such records found");
+		}
+		
+	}
+	
+	public void removeJobSeeker(int jsid)throws SQLException
+	{
+		PreparedStatement pst=con.prepareStatement("delete * from jobseekertable where jsid=?");
+		pst.setInt(1, jsid);
+		int i=pst.executeUpdate();
+		if(i>0)
+		{
+			System.out.println(i+" jobseeker is removed successfully");
+		}
+		else
+		{
+			System.out.println("no such records found");
+		}
+	}
+	public void removeJob(int jobid)throws SQLException{
+		PreparedStatement pst=con.prepareStatement("delete * from jobclasstable where jobid=?");
+		pst.setInt(1, jobid);
+		int i=pst.executeUpdate();
+		if(i>0)
+		{
+			System.out.println(i+" job post is removed successfully");
+		}
+		else
+		{
+			System.out.println("no such records found");
+		}
+		
+	}
 	
 	
 	public void postJob(int rid,JobClass jc) throws SQLException
@@ -214,11 +362,11 @@ public class JobDaoImpl implements JobDaoInterface {
 		else
 			System.out.println("update failed");
 	}
-	public void updateExperience(int rid,int postid, String uexperience)throws SQLException
+	public void updateExperience(int rid,int postid, float uexperience)throws SQLException
 	{
 		PreparedStatement pst=con.prepareStatement("update jobclass set experience=? where jobid=? and rid=?");
 		pst.setInt(1, postid);
-		pst.setString(2, uexperience);
+		pst.setFloat(2, uexperience);
 		pst.setInt(3, rid);
 		int g=pst.executeUpdate();
 		if(g>0)
@@ -300,6 +448,70 @@ public class JobDaoImpl implements JobDaoInterface {
 		
 	}
 	
+	public void updateCompanyName(int rid, int postid, String ucompanyname) throws SQLException {
+		PreparedStatement pst=con.prepareStatement("update jobclass set company_name=? where jobid=? and rid=?");
+		pst.setInt(1, postid);
+		pst.setString(2, ucompanyname);
+		pst.setInt(3, rid);
+		int k=pst.executeUpdate();
+		if(k>0)
+		{
+			System.out.println(k+" post updated succesfully");
+		}
+		else
+			System.out.println("update failed");
+		
+	}
+
+	
+	public void updateJob_Desc(int rid, int postid, String ujob_desc) throws SQLException {
+		
+		PreparedStatement pst=con.prepareStatement("update jobclass set job_description=? where jobid=? and rid=?");
+		pst.setInt(1, postid);
+		pst.setString(2, ujob_desc);
+		pst.setInt(3, rid);
+		int k=pst.executeUpdate();
+		if(k>0)
+		{
+			System.out.println(k+" post updated succesfully");
+		}
+		else
+			System.out.println("update failed");
+	}
+
+	@Override
+	public void updateQualification(int rid, int postid, String uqualification) throws SQLException {
+		// TODO Auto-generated method stub
+		PreparedStatement pst=con.prepareStatement("update jobclass set qualification=? where jobid=? and rid=?");
+		pst.setInt(1, postid);
+		pst.setString(2, uqualification);
+		pst.setInt(3, rid);
+		int k=pst.executeUpdate();
+		if(k>0)
+		{
+			System.out.println(k+" post updated succesfully");
+		}
+		else
+			System.out.println("update failed");
+		
+	}
+
+	@Override
+	public void updateKeySkills(int rid, int postid, String ukeyskills) throws SQLException {
+		// TODO Auto-generated method stub
+		PreparedStatement pst=con.prepareStatement("update jobclass set qualification=? where jobid=? and rid=?");
+		pst.setInt(1, postid);
+		pst.setString(2, ukeyskills);
+		pst.setInt(3, rid);
+		int k=pst.executeUpdate();
+		if(k>0)
+		{
+			System.out.println(k+" post updated succesfully");
+		}
+		else
+			System.out.println("update failed");
+		
+	}
 	
 	
 	
@@ -414,6 +626,38 @@ public class JobDaoImpl implements JobDaoInterface {
 		}
 	}
 
+	public void displayByExperience(int rid, float dexp) throws SQLException {
+		// TODO Auto-generated method stub
+		ResultSet rs=statement.executeQuery("select * from jobclass where experience='"+dexp+"'and rid='"+rid+"'");
+		while(rs.next())
+		{
+			                       //int jobid,String companyname, String jobrole,String job_description,                                                     String qualification, String keyskill, String location,float experience,                          String postdate, String type_of_job, String domain
+			System.out.println("JobId: "+rs.getInt(1)+" company name: "+rs.getString(2)+" jobrole:"+rs.getString(3)+" job_description:"+rs.getString(4)+" qualification:"+rs.getString(5)+" keyskill:"+rs.getString(6)+" location:"+rs.getString(7)+" experience:"+rs.getFloat(8)+" postdate:"+rs.getString(9)+" type_of_job"+rs.getString(10)+" domain"+rs.getString(11));
+		}
+		
+	}
+
+	@Override
+	public void displayByJobid(int rid, int djobid) throws SQLException {
+		// TODO Auto-generated method stub
+		ResultSet rs=statement.executeQuery("select * from jobclass where jobid='"+djobid+"'and rid='"+rid+"'");
+		while(rs.next())
+		{
+			                       //int jobid,String companyname, String jobrole,String job_description,                                                     String qualification, String keyskill, String location,float experience,                          String postdate, String type_of_job, String domain
+			System.out.println("JobId: "+rs.getInt(1)+" company name: "+rs.getString(2)+" jobrole:"+rs.getString(3)+" job_description:"+rs.getString(4)+" qualification:"+rs.getString(5)+" keyskill:"+rs.getString(6)+" location:"+rs.getString(7)+" experience:"+rs.getFloat(8)+" postdate:"+rs.getString(9)+" type_of_job"+rs.getString(10)+" domain"+rs.getString(11));
+		}
+		
+	}
+
+
+	
+
+	
+	
+	
+	
+	
+	
 	//update recruter details usecases
 	public void updateRname(int rid,String urname)throws SQLException
 	{
@@ -798,65 +1042,7 @@ public class JobDaoImpl implements JobDaoInterface {
 			System.out.println("failed");
 		}
 	}
-	
-	
-	
-	public void updateExperience(int rid, int postid, float uexp) throws SQLException {
+
 		
-		
-	}
-
-	@Override
-	public boolean AdminLogin(String jusername, String jpassword) throws SQLException {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public int jobseekerLogin(String jusername, String jpassword) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public void displayByExperience(int rid, float dexp) throws SQLException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void displayByJobid(int rid, int djobid) throws SQLException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void updateCompanyName(int rid, int postid, String ucompanyname) throws SQLException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void updateJob_Desc(int rid, int postid, String ujob_desc) throws SQLException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void updateQualification(int rid, int postid, String uqualification) throws SQLException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void updateKeySkills(int rid, int postid, String ukeyskills) throws SQLException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	
-	
-	
-	
 		
 	}

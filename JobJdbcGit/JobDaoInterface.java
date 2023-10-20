@@ -1,4 +1,4 @@
-package bitlabs123.jobportal_JDBC;
+package com.bitlabs.jobportaljdbc;
 
 import java.sql.SQLException;
 
@@ -130,6 +130,20 @@ public interface JobDaoInterface {
 	void viewAllAppliedJobs(int jsid)throws SQLException;
 
 	void displayAllRecruters()throws SQLException;
+
+	void displayAllJob_Seekers()throws SQLException;
+
+	void displayAllJobPosts()throws SQLException;
+
+	void removeRecruter(int rid)throws SQLException;
+
+	void removeJobSeeker(int jsid)throws SQLException;
+
+	void removeJob(int jobid)throws SQLException;
+
+	boolean validateUsername(String username)throws SQLException;
+
+	boolean validatePassword(String password)throws SQLException;
 	
 	
 	

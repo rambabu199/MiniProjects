@@ -1,4 +1,4 @@
-package bitlabs123.jobportal_JDBC;
+package com.bitlabs.jobportaljdbc;
 
 
 public class JobClass {
