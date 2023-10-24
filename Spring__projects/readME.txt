@@ -1,0 +1,1 @@
+It is a file that consists of spring projects
