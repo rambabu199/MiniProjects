@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 import com.example.demo.model.Student;
 import com.example.demo.services.StudentImpl;
+import com.example.demo.services.StudentImplInterFace;
 import com.example.demo.services.StudentNotFoundxception;
 
 
@@ -12,7 +13,7 @@ import com.example.demo.services.StudentNotFoundxception;
 @Component
 public class AdminController {
 	@Autowired
-	 private StudentImpl s;
+	 private StudentImplInterFace s;
 	public void addstu(Student st)
 	{
 		s.addStudent(st);

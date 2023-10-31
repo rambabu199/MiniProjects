@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import com.example.demo.model.Student;
 
 @Component
-public class StudentImpl {
+public class StudentImpl implements StudentImplInterFace {
 	TreeSet<Student> students=new TreeSet<Student>();
 	public void addStudent(Student stu)
 	{

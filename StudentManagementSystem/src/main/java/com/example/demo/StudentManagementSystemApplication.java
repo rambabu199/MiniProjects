@@ -214,7 +214,7 @@ public class StudentManagementSystemApplication {
 		con=sc.next().charAt(0);
 		}while(con!='n');
 		
-		sc.close();
+		
 		
 	}
 
